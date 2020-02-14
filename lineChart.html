@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <link href="style.css" rel="stylesheet">
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+
+
+</head>
+
+<body>
+
+<h2 class="headertext">Volume of flights to Canada by month</h2>
+
+<svg></svg>
+
+
+<p>Data acquired from <a href="https://data.sfgov.org/Transportation/Air-Traffic-Passenger-Statistics/rkru-6vcg/data">data.sfgov.org</a> on February 7, 2020.</p>
+
+<script>
+
+// location of data file
+let csv = 'Canada_Flights.csv';
+
+// load data
+d3.csv(csv, convertRow).then(drawLine);
+
+let parseRowDate = d3.timeParse('%Y%m');
+let formatDate = d3.timeFormat('%B');
+
+// configuration of svg/plot area
+let config = {
+  'svg': {},
+  'margin': {},
+  'plot': {}
+};
+
+config.svg.height = 450;
+config.svg.width = config.svg.height * 1.618; // golden ratio
+
+config.margin.top = 10;
+config.margin.right = 10;
+config.margin.bottom = 20;
+config.margin.left = 80;
+
+config.plot.x = config.margin.left;
+config.plot.y = config.margin.top;
+config.plot.width = config.svg.width - config.margin.left - config.margin.right;
+config.plot.height = config.svg.height - config.margin.top - config.margin.bottom;
+
+// setup svg
+let svg = d3.select('body').select('svg');
+svg.attr('width', config.svg.width);
+svg.attr('height', config.svg.height);
+
+// setup plot area
+let plot = svg.append('g');
+plot.attr('id', 'plot');
+plot.attr('transform', translate(config.plot.x, config.plot.y));
+
+function sortByMonth(arr) {
+  var months = ["January", "February", "March", "April", "May", "June",
+  	        "July", "August", "September", "October", "November", "December"];
+  arr.sort(function(a, b){
+      return months.indexOf(a.values.date)
+           - months.indexOf(b.values.date);
+  });
+}
+
+// function to convert each row
+// https://github.com/d3/d3-fetch/blob/master/README.md#csv
+function convertRow(row, index) {
+  // this will be our converted output row
+  let out = {};
+
+  // can be values for Activity period and count, possibly geo Summary
+ out.values = [];
+ console.log(out.values);
+ out.values.count = 0
+
+  // loop through all of the columns in our original row
+  // depending on column name, perform some sort of conversion
+  //
+  for (let col in row) {
+    switch (col) {
+      // these are the text columns that do not need conversion
+      case 'Activity Period':
+        out[col] = formatDate(parseRowDate(row[col]));
+        out.values.date = formatDate(parseRowDate(row[col]));
+        //console.log("HELLOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+
+        //console.log("dates: ", out.values.date);
+        break;
+
+      // these are the columns that need to be converted to integer
+      case 'Passenger Count':
+        out[col] = parseInt(row[col]);
+        out.values.count = parseInt(row[col]);
+        break;
+    }
+  }
+  return out;
+}
+
+
+
+function drawLine(data){
+
+  let svg = d3.select("body").select("svg");
+      console.assert(svg.size() == 1);
+
+  // set the dimensions and margins of the graph
+  let margin = {
+top:    15,
+right:  25, // leave space for y-axis
+bottom: 30, // leave space for x-axis
+left:   90
+};
+
+// now we can calculate how much space we have to plot
+let bounds = svg.node().getBoundingClientRect();
+let plotWidth = bounds.width - margin.right - margin.left;
+let plotHeight = bounds.height - margin.top - margin.bottom;
+
+
+sortByMonth(data);
+
+  let values = data.map(d => d.values);
+  //console.log(values)
+  var merged = Object.values(values.reduce((r, o) => {
+    r[o.date] = r[o.date] || {date: o.date, count : 0};
+    r[o.date].count += +o.count;
+    return r;
+  },{}));
+  console.log("merged");
+  console.log(merged);
+
+  // we are actually going to draw on the "plot area"
+   let plot = svg.append("g").attr("id", "plot");
+
+
+   // shift the plot area over by our margins to leave room
+   // for the x- and y-axis
+   plot.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+   console.assert(plot.size() == 1);
+
+    let date = merged.map(d => d.date)
+    console.log(typeof date)
+    // Add X axis --> it is a date format
+    var xx = d3.scaleBand()
+      .domain(date)
+      .range([ 0, plotWidth ]);
+    svg.append("g")
+      .attr("transform", "translate(0," + plotHeight + ")")
+      .call(d3.axisBottom(xx));
+
+    // Add Y axis
+    var yy = d3.scaleLinear()
+      .domain([0, d3.max(merged, function(d) { return +d.count; })])
+      .range([ plotHeight, 0 ]);
+    svg.append("g")
+      .call(d3.axisRight(yy))
+
+
+      let pairs = Array.from(merged);
+      console.log("pairs", pairs)
+
+
+
+    // Add the line
+    svg.append("path")
+      .datum(pairs)
+      .attr("fill", "none")
+      .attr("stroke", "steelblue")
+      .attr("stroke-width", 1.5)
+      .attr("height", function(d) { return plotHeight - yy(d.count)})
+      .attr("width", xx.bandwidth())
+      .attr("d", d3.line()
+        .x(function(d) { return xx(d.date)+ 40 })
+        .y(function(d) { return yy(d.count) })
+      )
+
+
+
+
+}
+
+
+// helper method to make translating easier
+function translate(x, y) {
+  return 'translate(' + x + ',' + y + ')';
+}
+
+</script>
+</body>
+</html>

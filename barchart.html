@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <link href="style.css" rel="stylesheet">
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+</head>
+
+<body>
+
+<h2 class="headertext">Airlines with over 2 Million passengers on domestic flights between 2006-2018</h2>
+
+<svg></svg>
+
+<p>Data acquired from <a href="https://data.sfgov.org/Transportation/Air-Traffic-Passenger-Statistics/rkru-6vcg/data">data.sfgov.org</a> on February 7, 2020.</p>
+
+<script>
+
+// location of data file
+let csv = 'SFO_Airline_Count.csv';
+
+// load data
+d3.csv(csv, convertRow).then(drawBars);
+
+// function to convert each row
+// https://github.com/d3/d3-fetch/blob/master/README.md#csv
+function convertRow(row, index) {
+  // this will be our converted output row
+  let out = {};
+  //out example #0
+   /*0:
+Operating Airline: "Virgin Atlantic"
+Passenger Count: 34531
+GEO Summary: "International"*/ //We need to filter out international
+
+  // can be values for airline and count, possibly geo Summary
+out.values = [];
+ out.values.airline = ""
+ out.values.count = 0
+
+  // loop through all of the columns in our original row
+  // depending on column name, perform some sort of conversion
+  //
+  for (let col in row) {
+    switch (col) {
+      // these are the text columns that do not need conversion
+      case 'GEO Summary':
+        out[col] = row[col];
+        break;
+
+      case 'Operating Airline':
+        out[col] = row[col];
+        out.values.airline = row[col];
+        break;
+
+      // these are the columns that need to be converted to integer
+      case 'Passenger Count':
+        out[col] = parseInt(row[col]);
+        out.values.count = parseInt(row[col]);
+        break;
+    }
+  }
+
+  return out;
+}
+
+
+
+function drawBars(data){
+  let svg = d3.select("body").select("svg");
+      console.assert(svg.size() == 1);
+
+        let margin = {
+     top:    15,
+     right:  25, // leave space for y-axis
+     bottom: 30, // leave space for x-axis
+     left:   90
+   };
+
+   // now we can calculate how much space we have to plot
+   let bounds = svg.node().getBoundingClientRect();
+   let plotWidth = bounds.width - margin.right - margin.left;
+   let plotHeight = bounds.height - margin.top - margin.bottom;
+
+
+
+  //filter geo Summary
+  data = data.filter(function(row) {
+    return row['GEO Summary'] === 'Domestic';
+    });
+
+
+  let values = data.map(d => d.values);
+  var merged = Object.values(values.reduce((r, o) => {
+    r[o.airline] = r[o.airline] || {airline: o.airline, count : 0};
+    r[o.airline].count += +o.count;
+    return r;
+    },{}));
+
+    console.log("--------");
+    console.log(merged);
+
+    data = merged.filter(function(row) {
+      return row['count'] > 2000000;
+        });
+
+        console.log("--------");
+        console.log(data);
+
+  // need domains to setup scales
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
+  let count = data.map(row => row['count']);
+  console.log("all counts", count);
+
+  let countMin = 0; // always include 0 in a bar chart!
+  let countMax = d3.max(count);
+  console.log("count bounds:", [countMin, countMax]);
+
+  let airlineList = data.map(row => row['airline']);
+  console.log(airlineList);
+
+  let countScale = d3.scaleLinear()
+   .domain([countMin, countMax])
+   .range([plotHeight, 0])
+   .nice(); // rounds the domain a bit for nicer output
+
+ /*
+  * the airline need an ordinal scale instead, which is used for
+  * categorical data. we want a bar space for all letters, not just
+  * the ones we found, and spaces between bars.
+  * https://github.com/d3/d3-scale#band-scales
+  */
+ let airlineScale = d3.scaleBand()
+   .domain(airlineList) // all airlines (not using the count here)
+   .rangeRound([0, plotWidth])
+   .paddingInner(0.1); // space between bars
+
+ // we are actually going to draw on the "plot area"
+  let plot = svg.append("g").attr("id", "plot");
+
+
+  // shift the plot area over by our margins to leave room
+  // for the x- and y-axis
+  plot.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  console.assert(plot.size() == 1);
+
+  // now lets draw our x- and y-axis
+  // these require our x (letter) and y (count) scales
+  let xAxis = d3.axisBottom(airlineScale);
+  let yAxis = d3.axisLeft(countScale)
+  yAxis.ticks(7, "f")
+  .tickFormat(d3.formatPrefix(".0", 1e6)); // Implicit precision of one.
+
+  let xGroup = plot.append("g").attr("id", "x-axis");
+ xGroup.call(xAxis);
+
+ // notice it is at the top of our svg
+ // we need to translate/shift it down to the bottom
+ xGroup.attr("transform", "translate(0," + plotHeight + ")");
+
+ // do the same for our y axix
+ let yGroup = plot.append("g").attr("id", "y-axis");
+ yGroup.call(yAxis);
+
+
+ // now how about some bars!
+
+ /*
+  * time to bind each data element to a rectangle in our visualization
+  * hence the name data-driven documents (d3)
+  */
+
+ /*
+  * we need our data as an array of key, value pairs before binding
+  */
+ let pairs = Array.from(data);
+ console.log("pairs:", pairs);
+
+ // let bars = plot.selectAll("rect")
+ //   .data(pairs, function(d) { return d[0]; });
+
+   let bar = plot.selectAll("rect")
+        .data(pairs);
+
+     svg.selectAll(".bar")
+     .data(pairs)
+     .enter().append("rect")
+     .attr("class", "bar")
+     .attr("x", function(d) { return airlineScale(d.airline)+90; })
+     .attr("width", airlineScale.bandwidth())
+     .attr("y", function(d) { return countScale(d.count)+15; })
+     .attr("height", function(d) { return plotHeight - countScale(d.count); });
+
+}
+
+
+// helper method to make translating easier
+function translate(x, y) {
+  return 'translate(' + x + ',' + y + ')';
+}
+
+</script>
+</body>
+</html>
