@@ -1,19 +1,119 @@
-<!doctype html>
-<html lang="en">
-
-<head>
-  <meta charset="utf-8">
-  <link href="style.css" rel="stylesheet">
-  <script src="https://d3js.org/d3.v5.min.js"></script>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
 
 
-</head>
+    <!-- TODO: Change title -->
+    <title>Line Graph</title>
 
-<body>
+    <!-- Load Bulma from CDN (consider saving it to repository instead) -->
+    <!-- https://bulma.io/ -->
+    <link rel="stylesheet" href=https://jenil.github.io/bulmaswatch/pulse/bulmaswatch.min.css>
+    <link href="style.css" rel="stylesheet">
+    <!-- Load Font Awesome 5 (free) icons -->
+    <script src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <script  src="https://d3js.org/d3.v5.min.js"></script>
+  </head>
+
+  <body>
+
+  <!-- Page header -->
+  <!-- https://bulma.io/documentation/layout/hero/ -->
+  <section class="hero is-primary is-bold">
+    <div class="hero-body">
+      <div class="container">
+        <!-- TODO: Change title -->
+        <h1 class="title">Line Graph</h1>
+        <!-- TODO: Change subtitle -->
+        <h2 class="subtitle">Tableau and d3 graphs</h2>
+      </div>
+    </div>
+  </section>
+  <!-- End page header -->
+
+  <!-- Page navigation -->
+  <!-- https://bulma.io/documentation/components/navbar/ -->
+  <nav class="navbar is-light" role="navigation" aria-label="main navigation">
+    <div class="container">
+      <div class="navbar-brand">
+        <!-- TODO: Change link to repository homepage if needed -->
+        <!-- TODO: Change which navbar-item is-active if needed -->
+        <a class="navbar-item is-active" href="index.html">
+          <span class="icon"><i class="fas fa-home"></i></span>
+          <span>Home</span>
+        </a>
+
+        <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="main-menu">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+
+      <div id="main-menu" class="navbar-menu has-text-weight-medium">
+        <!-- Left navbar items -->
+        <div class="navbar-start">
+          <a class="navbar-item" href="#data" title="Data">
+            <span class="icon"><i class="fas fa-table"></i></span>
+            <span>Data</span>
+          </a>
+
+          <!-- TODO: Modify or remove dropdown -->
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link">
+              Visualizations
+            </a>
+
+            <div class="navbar-dropdown">
+              <a class="navbar-item" href="lineChart.html">
+                <span class="icon"><i class="fas fa-chart-line"></i></span>
+                <span>Line Chart</span>
+              </a>
+              <a class="navbar-item" href="VolumeChart.html">
+                <span class="icon"><i class="fas fa-chart-area"></i></span>
+                <span>Area Chart</span>
+              </a>
+
+              <hr class="navbar-divider">
+
+              <a class="navbar-item" href="barchart.html">
+                <span class="icon" ><i class="fas fa-chart-bar"></i></span>
+                <span>Bar Chart</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+      
+      </div>
+    </div>
+  </nav>
+  <!-- End page navigation -->
+
+  <section class="section">
+    <div class="container">
+      <!-- Begin page content -->
+      <div class="content">
+        <h1 class="title">
+          <!-- TODO: Change page title -->
+          Line graph and Tableau Visualization
+        </h1>
+
+        <figure >
+          <img src="lineGraph.png"></img>
+        </figure>
+        <div class="content">
+
+
+
+
+
+
 
 <h2 class="headertext">Volume of flights to Canada by month</h2>
 
-<svg></svg>
+<svg id="line-chart"></svg>
 
 
 <p>Data acquired from <a href="https://data.sfgov.org/Transportation/Air-Traffic-Passenger-Statistics/rkru-6vcg/data">data.sfgov.org</a> on February 7, 2020.</p>
@@ -29,7 +129,7 @@ d3.csv(csv, convertRow).then(drawLine);
 let parseRowDate = d3.timeParse('%Y%m');
 let formatDate = d3.timeFormat('%B');
 
-// configuration of svg/plot area
+//configuration of svg/plot area
 let config = {
   'svg': {},
   'margin': {},
@@ -54,10 +154,6 @@ let svg = d3.select('body').select('svg');
 svg.attr('width', config.svg.width);
 svg.attr('height', config.svg.height);
 
-// setup plot area
-let plot = svg.append('g');
-plot.attr('id', 'plot');
-plot.attr('transform', translate(config.plot.x, config.plot.y));
 
 function sortByMonth(arr) {
   var months = ["January", "February", "March", "April", "May", "June",
@@ -107,10 +203,10 @@ function convertRow(row, index) {
 
 function drawLine(data){
 
-  let svg = d3.select("body").select("svg");
+  let svg = d3.select("body").select("#line-chart");
       console.assert(svg.size() == 1);
 
-  // set the dimensions and margins of the graph
+  //set the dimensions and margins of the graph
   let margin = {
 top:    15,
 right:  25, // leave space for y-axis
@@ -153,14 +249,17 @@ sortByMonth(data);
       .domain(date)
       .range([ 0, plotWidth ]);
     svg.append("g")
-      .attr("transform", "translate(0," + plotHeight + ")")
+      .attr("transform", translate(60, plotHeight))// + nums move right
       .call(d3.axisBottom(xx));
 
     // Add Y axis
+    let countMin = 0; // always include 0 in a bar chart!
+    let countMax = d3.max(merged, function(d) { return +d.count; });
     var yy = d3.scaleLinear()
-      .domain([0, d3.max(merged, function(d) { return +d.count; })])
-      .range([ plotHeight, 0 ]);
+      .domain([0, countMax]).nice()
+      .range([ plotHeight, 20 ]).nice(); //+ nums moves right
     svg.append("g")
+    .attr("transform", translate(60,0))
       .call(d3.axisRight(yy))
 
 
@@ -178,7 +277,7 @@ sortByMonth(data);
       .attr("height", function(d) { return plotHeight - yy(d.count)})
       .attr("width", xx.bandwidth())
       .attr("d", d3.line()
-        .x(function(d) { return xx(d.date)+ 40 })
+        .x(function(d) { return xx(d.date)+ 100 })
         .y(function(d) { return yy(d.count) })
       )
 

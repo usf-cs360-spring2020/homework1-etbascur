@@ -65,24 +65,20 @@
             </a>
 
             <div class="navbar-dropdown">
-              <a class="navbar-item">
+              <a class="navbar-item" href="lineChart.html">
                 <span class="icon"><i class="fas fa-chart-line"></i></span>
                 <span>Line Chart</span>
               </a>
-              <a class="navbar-item">
+              <a class="navbar-item" href="VolumeChart.html">
                 <span class="icon"><i class="fas fa-chart-area"></i></span>
                 <span>Area Chart</span>
               </a>
 
               <hr class="navbar-divider">
 
-              <a class="navbar-item">
-                <span class="icon"><i class="fas fa-chart-bar"></i></span>
+              <a class="navbar-item" href="barchart.html">
+                <span class="icon" ><i class="fas fa-chart-bar"></i></span>
                 <span>Bar Chart</span>
-              </a>
-              <a class="navbar-item">
-                <span class="icon"><i class="fas fa-chart-pie"></i></span>
-                <span>Pie Chart</span>
               </a>
             </div>
           </div>
@@ -210,69 +206,42 @@ without stops. It is a text type.</li>
         <p>For now this is just a demo. The buttons below do not go anywhere, but can be easily changed to link to different visualization pages.</p>
 
         <p class="buttons">
-          <a class="button is-large is-success" href="#">
+          <a class="button is-large is-success" href="lineChart.html">
             <span class="icon is-medium">
               <i class="fas fa-chart-line"></i>
             </span>
             <span>Line Chart</span>
           </a>
 
-          <a class="button is-large is-primary" href="#">
+          <a class="button is-large is-primary" href="VolumeChart.html">
             <span class="icon is-medium">
               <i class="fas fa-chart-area"></i>
             </span>
             <span>Area Chart</span>
           </a>
 
-          <a class="button is-large is-info" href="#">
+          <a class="button is-large is-info" href="barchart.html">
             <span class="icon is-medium">
               <i class="fas fa-chart-bar"></i>
             </span>
             <span>Bar Chart</span>
           </a>
-
-          <a class="button is-large is-link" href="#">
-            <span class="icon is-medium">
-              <i class="fas fa-chart-pie"></i>
-            </span>
-            <span>Pie Chart</span>
-          </a>
         </p>
-
-        <!-- https://github.com/vega/vega-embed#basic-example -->
-        <p>It is possible to embed some visualizations directly here too. Here is <a href="https://github.com/vega/vega-embed#basic-example">an example</a> using Vega-Lite:</p>
-
-        <script src="https://cdn.jsdelivr.net/npm/vega@5.9.0"></script>
-        <script src="https://cdn.jsdelivr.net/npm/vega-lite@4.0.2"></script>
-        <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.2.1"></script>
 
         <div id="vis"></div>
 
-        <script type="text/javascript">
-        var spec = "https://raw.githubusercontent.com/vega/vega/master/docs/examples/bar-chart.vg.json";
-        vegaEmbed('#vis', spec).then(function(result) {
-          // Access the Vega view instance (https://vega.github.io/vega/docs/api/view/) as result.view
-        }).catch(console.error);
-        </script>
-
-        <h4>Instructions</h4>
-
-        <p>You will likely need to include instructions on how to interpet and use the visualization. In the case above, if you click the three dots <i class="fas fa-ellipsis-h has-text-grey-light	"></i> above it will open a menu where you can either save the visualization to a SVG or PNG, or alternatively open it up in the online Vega Editor.</p>
 
         <h4>Discussion</h4>
 
-        <p>You may also need other sections, like a discussion section, per-visualization section on data wrangling, and others. Because of the extra content and code visualizations take, it might be worthwhile to break up your pages into one home page and then one page per visualization.</p>
+        <p>These visualizations let us see how we can more easily interpret different information quickly from a large data set, depending on the author's focus of the data.</p>
 
         <span class="heading">Acknowledgements</span>
+        <p>A lot of the code for these graphs come from different domains, among them Sophie Engle's <a href="https://blockbuilder.org/sjengle/47c5c20a18ec29f4e2b82905bdb7fe95">ZillowHeat Map</a> on block builder,
+        and her <a href="https://gist.github.com/sjengle/01c24c71016a97938beae8c778c15911">Letter count bar chart</a>, as well as
+          <a href="https://www.d3-graph-gallery.com/graph/line_basic.html">Yan Holtz's'</a> line graph example.<br/>
 
-        <p>
-          <a href="#">Link to insiration</a><br/>
-          <a href="#">Link to StackOverflow snippet</a>
         </p>
 
-        <p class="is-6">
-          <em>Thanks to Person Name for their suggestion to do something with the visualization.</em>
-        </p>
 
         <h2 id="grade">Grade</h2>
 
@@ -299,25 +268,25 @@ without stops. It is a text type.</li>
             <tr>
               <td>D</td>
               <td><i class="has-text-success fas fa-check-circle"></i></td>
-              <td>Discussion of how this grade level was satisfied. Exactly how this section should look will depend on the assignment in question. There is no requirement for formatting in this way. This is just an example of what a table element might look like for this informaiton.</td>
+              <td> Completed 3 Tableau visualizations</td>
             </tr>
 
             <tr>
               <td>C</td>
               <td><i class="has-text-success fas fa-check-circle"></i></td>
-              <td>Discussion of how this grade level was satisfied.</td>
+              <td> Completed 3 Tableau visualizations</td>
             </tr>
 
             <tr>
               <td>B</td>
-              <td><i class="has-text-success far fa-check-circle"></i></td>
-              <td>Discussion of how this grade level was satisfied.</td>
+              <td><i class="has-text-success fas fa-check-circle"></i></td>
+              <td>Completed 3 Tableau Visualizations and 1 D3 Visualization</td>
             </tr>
 
             <tr>
               <td>A</td>
-              <td><i class="has-text-success fas fa-times-circle"></i></td>
-              <td>Discussion of how this grade level was not satisfied.</td>
+              <td><i class="has-text-success fas fa-check-circle"></i></td>
+              <td>Completed 3 Tableau visualizations and 2 D3 visualizations</td>
             </tr>
           </tbody>
 
@@ -330,22 +299,22 @@ without stops. It is a text type.</li>
         <article class="media">
           <!-- TODO: Replace with profile photo -->
           <figure class="media-left">
-            <p class="image is-128x128"><img class="is-rounded" src="profile.png"></p>
+            <p class="image is-128x128"><img class="is-rounded" src="headshotResized.jpg"></p>
           </figure>
 
           <div class="media-content">
             <div class="content">
               <!-- TODO: Replace with contact information -->
               <p>
-                <strong>Full Name</strong><br/>
+                <strong>Enrique Bascur</strong><br/>
                 CS Major, <a href="https://www.usfca.edu/">University of San Francisco</a><br/>
-                <em>Expected Graduation: 20??</em><br/>
-                <i class="fas fa-envelope"></i> <a href="mailto:username@dons.usfca.edu">username@dons.usfca.edu</a>
+                <em>Expected Graduation: May 2020</em><br/>
+                <i class="fas fa-envelope"></i> <a href="mailto:username@dons.usfca.edu">ebascur@dons.usfca.edu</a>
               </p>
 
               <!-- TODO: Replace with brief biography -->
               <p>
-                Here is a brief bio about yourself. A good rule of thumb is to include at least one technical tidbit (favorite area or course within computer science), and one fun tidbit (such as loving dogs).
+                I'm a Computer Science major learning about Data Visualizations, I hope to be able to take what I learn in this course and integrate it with my personal hobbies, such as rock climbing and other mountain related sports.
               </p>
 
               <!-- TODO: Replace or remove tags -->
@@ -356,6 +325,7 @@ without stops. It is a text type.</li>
                 <span class="tag">Python</span>
                 <span class="tag">C</span>
                 <span class="tag">Java</span>
+                <span class="tag">GoLang</span>
                 <span class="tag">JavaScript</span>
                 <span class="tag">HTML</span>
                 <span class="tag">CSS</span>
@@ -384,7 +354,7 @@ without stops. It is a text type.</li>
 
       <p>
         <!-- TODO: Change to link to your Github repository -->
-        <a href="https://github.com/usf-cs360-spring2020/template-bulma" class="button is-small" style="padding-left: 1em; padding-right: 1em;">
+        <a href="https://github.com/usf-cs360-spring2020/homework1-etbascur" class="button is-small" style="padding-left: 1em; padding-right: 1em;">
           <i class="fab fa-github-alt"></i>&nbsp;<strong>Github</strong>
         </a>
 
