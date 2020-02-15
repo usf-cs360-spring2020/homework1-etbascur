@@ -1,12 +1,13 @@
 # README
 
-<https://usf-cs360-spring2020.github.io/template-bulma/>
+Homework 1 was to create 3 Tableau Visualizations and 2 static D3 visualizations based on the tableau visualizations, using the same data set.
+This is the github site where you can interact with the visualizations.
 
-![headshotResized.jpg](profile.png)
+<https://usf-cs360-spring2020.github.io/homework1-etbascur/>
+
+![headshotResized.jpg](headshotResized.jpg)
 
 **Name:** Enrique Bascur  
 **Email:** <ebascur@dons.usfca.edu>
-
-This is a template website using [Bulma](https://bulma.io/), [FontAwesome](https://origin.fontawesome.com/) for icons, and [Github Pages](). Designed to be modified (including this README file).
 
 *Template based on: <https://github.com/usf-cs360-spring2020/template-bulma>*
